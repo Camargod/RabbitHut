@@ -1,5 +1,6 @@
 package com.mygdx.game.Screens;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -17,7 +18,9 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.InputProcessor.InputCore;
 import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Tools.Box2DWorldCreator;
+import com.mygdx.game.Tools.MyContactListener;
 import com.mygdx.game.Tools.SoundPlayer;
+import com.mygdx.game.objects.Npc;
 import com.mygdx.game.objects.Player;
 
 public class MainMenuScreen implements Screen 
@@ -35,8 +38,10 @@ public class MainMenuScreen implements Screen
 	private OrthogonalTiledMapRenderer renderer;
 	
 	private Player player;
+	private Npc npcs[] = new Npc[3];
 	
 	private World world;
+	private MyContactListener colisionTrigger;
 
 	private Box2DWorldCreator worldColisions; 
 
@@ -44,22 +49,26 @@ public class MainMenuScreen implements Screen
 	{
 		this.game = game;
 		world = new World(new Vector2(0,0), true);
+		colisionTrigger = new MyContactListener();
+		world.setContactListener(colisionTrigger);
 
 		maploader = new TmxMapLoader();
-		this.player = new Player("Gabriel", this, game);
+		map = maploader.load("map002.tmx");
+
+		player = new Player("Gabriel", this, game);
+		npcs[0]= new Npc(this,map,"NPC001");
+
 		gameCamera = new OrthographicCamera();
 		gameViewPort = new FitViewport((MyGdxGame.V_WIDTH/2.8f)/MyGdxGame.PPM,(MyGdxGame.V_HEIGHT/2.8f)/MyGdxGame.PPM,gameCamera);
 		hud = new Hud(game.batch);
 
-		maploader = new TmxMapLoader();
-		map = maploader.load("map002.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
 		SoundPlayer.rain();
 
 		worldColisions = new Box2DWorldCreator(world,map);
 
-		gameCamera.position.set(gameViewPort.getWorldWidth()/2, gameViewPort.getWorldWidth()/4,0);
-		
+		gameCamera.position.set(gameViewPort.getWorldWidth()/2, gameViewPort.getWorldHeight()/2,0);
+
 		InputCore = new InputCore(gameCamera);
 		Gdx.input.setInputProcessor(InputCore);
 	}
@@ -96,6 +105,10 @@ public class MainMenuScreen implements Screen
 		{
 			player.setRunningState(false);
 		}
+		if(Gdx.input.isKeyPressed(Input.Keys.E) && colisionTrigger.hasNpcPlayerColision)
+		{
+			
+		}
 	}
 	
 	public void update(float dt)
@@ -118,7 +131,7 @@ public class MainMenuScreen implements Screen
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		renderer.render();
 		worldColisions.b2dr.render(world, gameCamera.combined);
-		player.draw(game.batch,game.elapsedTime);
+		player.draw(game.batch,game.elapsedTime,gameViewPort.getScreenWidth(), gameViewPort.getScreenHeight());
 		hud.stage.draw();
 		update(delta);
 	}

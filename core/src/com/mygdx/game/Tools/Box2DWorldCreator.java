@@ -1,5 +1,7 @@
 package com.mygdx.game.Tools;
 
+import java.util.List;
+
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -24,7 +26,24 @@ public class Box2DWorldCreator
     public Box2DWorldCreator(World world, TiledMap map)
     {
         //creates wall bodies/fixtures 
-		for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class))
+		for(MapObject object : map.getLayers().get("House Items").getObjects().getByType(RectangleMapObject.class))
+		{
+			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+			
+			bdef.type = BodyDef.BodyType.StaticBody;
+			bdef.position.set((rect.getX() + rect.getWidth() /2)/ MyGdxGame.PPM, (rect.getY() + rect.getHeight()/2)/MyGdxGame.PPM);
+			
+			body = world.createBody(bdef);
+			shape.setAsBox((rect.getWidth()/2)/MyGdxGame.PPM, (rect.getHeight()/2)/MyGdxGame.PPM);
+			
+			fixtDef.shape = shape;
+			body.createFixture(fixtDef);
+		}
+	}
+	public Box2DWorldCreator(World world, TiledMap map, List<String> mapItems)
+    {
+        //creates wall bodies/fixtures 
+		for(MapObject object : map.getLayers().get("House Items").getObjects().getByType(RectangleMapObject.class))
 		{
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 			

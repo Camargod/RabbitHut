@@ -16,9 +16,10 @@ import com.mygdx.game.Screens.MainMenuScreen;
 
 public class Player extends Sprite
 {
-	public World world;
-	public Body b2Body;
+	public  World world;
+	public  Body b2Body;
 	private String name = "Default";
+	public final String id = "Player";
 	private float X = 32f;
 	private float Y = 32f;
 	private Texture playerSprite;
@@ -27,7 +28,7 @@ public class Player extends Sprite
 	private Array<TextureRegion> downSprite;
 	private Array<TextureRegion> leftSprite;
 	private Array<TextureRegion> rightSprite;
-	public Animation<TextureRegion> playerAnim;
+	public  Animation<TextureRegion> playerAnim;
 	private float animationSpeed = 0.2f;
 
 	private boolean isRunning = false;
@@ -43,15 +44,14 @@ public class Player extends Sprite
 		super();
 		this.name = name;
 		this.world = screen.getWorld();
-
 		playerSprite = new Texture(Gdx.files.internal("player/knight.png"));
 
-		idleSprite = new Array<TextureRegion>();
-		upSprite = new Array<TextureRegion>();
-		downSprite = new Array<TextureRegion>();
-		leftSprite = new Array<TextureRegion>();
-		rightSprite = new Array<TextureRegion>();
-
+		idleSprite   = new Array<TextureRegion>();
+		upSprite     = new Array<TextureRegion>();
+		downSprite   = new Array<TextureRegion>();
+		leftSprite   = new Array<TextureRegion>();
+		rightSprite  = new Array<TextureRegion>();
+		
 		//tamanho do sprite 34/82
 		for(int i = 0; i <=3; i++)
 		{
@@ -81,7 +81,8 @@ public class Player extends Sprite
 		{
 			leftSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
 		}
-
+		setBounds(0, 0, 43, 88);
+		setRegion(idleSprite.first());
 		definePlayer();
 	}
 	
@@ -168,43 +169,36 @@ public class Player extends Sprite
 		animationSpeed = param ? 0.2f : 0.4f;
 	}
 
-	// public void update(SpriteBatch batch, float elapsedTime)
-	// {
-	// 	X = b2Body.getPosition().x;
-	// 	Y = b2Body.getPosition().y;
-	// 	batch.begin();
-	// 	batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
-	// 	batch.end();
-	// }
-	public void draw (SpriteBatch batch, float elapsedTime)
+	public void draw (SpriteBatch batch, float elapsedTime, float width, float height)
 	{
 		batch.begin();
-		switchDraw(playerDirection, batch, elapsedTime);
+		switchDraw(playerDirection, batch, elapsedTime, width, height);
 		batch.end();
 	}
-	public void switchDraw(String state, SpriteBatch batch, float elapsedTime)
+
+	public void switchDraw(String state, SpriteBatch batch, float elapsedTime, float width, float height)
 	{
 		switch(state)
 		{
 			case "idle":
 				playerAnim = new Animation<TextureRegion>(0.1f,idleSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
 				break;
 			case "UP":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
 				break;
 			case "DOWN":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
 				break;
 			case "LEFT":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
 				break;
 			case "RIGHT":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), MyGdxGame.V_WIDTH/2 - 17, MyGdxGame.V_HEIGHT/2 - 10);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
 				break;
 		}
 		
