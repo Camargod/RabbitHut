@@ -18,6 +18,7 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.InputProcessor.InputCore;
 import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Tools.Box2DWorldCreator;
+import com.mygdx.game.Tools.JSONDialogReader;
 import com.mygdx.game.Tools.MyContactListener;
 import com.mygdx.game.Tools.SoundPlayer;
 import com.mygdx.game.objects.Npc;
@@ -45,6 +46,8 @@ public class MainMenuScreen implements Screen
 
 	private Box2DWorldCreator worldColisions; 
 
+	private JSONDialogReader dialogReader;
+
 	public MainMenuScreen(MyGdxGame game)
 	{
 		this.game = game;
@@ -61,6 +64,7 @@ public class MainMenuScreen implements Screen
 		gameCamera = new OrthographicCamera();
 		gameViewPort = new FitViewport((MyGdxGame.V_WIDTH/2.8f)/MyGdxGame.PPM,(MyGdxGame.V_HEIGHT/2.8f)/MyGdxGame.PPM,gameCamera);
 		hud = new Hud(game.batch);
+		dialogReader = new JSONDialogReader();
 
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
 		SoundPlayer.rain();
@@ -105,9 +109,21 @@ public class MainMenuScreen implements Screen
 		{
 			player.setRunningState(false);
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.E) && colisionTrigger.hasNpcPlayerColision)
+		if(Gdx.input.isKeyJustPressed(Input.Keys.E) && colisionTrigger.hasNpcPlayerColision)
 		{
-			
+			if(!hud.alreadyInDialog)
+			{
+				hud.setSpeechArray(dialogReader.setActualSpeech(colisionTrigger.activeNpc));
+				hud.updateSpeech();
+			} 
+			else
+			{
+				if(!hud.updateSpeech())
+				{
+					hud.resetDialog();
+				}
+			}
+
 		}
 	}
 	

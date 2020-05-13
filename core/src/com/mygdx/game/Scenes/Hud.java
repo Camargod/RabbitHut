@@ -24,6 +24,13 @@ public class Hud
 	
 	private Label timeLabel;
 
+	private Label dialogLabel;
+	private String dialogString;
+
+	public String[] speeches;
+	private int actualSpeech = 0;
+	public boolean alreadyInDialog;
+
 	public Hud(SpriteBatch sb)
 	{
 		worldTimer = Date.from(Instant.now());
@@ -36,15 +43,42 @@ public class Hud
 		table.setFillParent(true);
 		
 		timeLabel = new Label(worldTimer.toString(), new Label.LabelStyle(new BitmapFont(),Color.WHITE));
-		
+		dialogLabel = new Label("texto", new Label.LabelStyle(new BitmapFont(),Color.WHITE));
+
 		table.add(timeLabel).expandX().padTop(10).right();
 		table.row();
+		table.add(dialogLabel).expandY().center().padBottom(180);
 		
 		stage.addActor(table);
+
 	}
 	public void update(float dt)
 	{
 		worldTimer = Date.from(Instant.now());
 		timeLabel.setText(worldTimer.toString());
+	}
+	public boolean updateSpeech()
+	{
+		if(speeches != null)
+		{
+			alreadyInDialog = true;
+			dialogLabel.setText(speeches[actualSpeech]);
+			if(actualSpeech < speeches.length)
+			{
+				actualSpeech++;
+				return true;
+			}
+			resetDialog();
+			return false;
+		}
+		return false;
+	}
+	public void setSpeechArray(String[] speeches)
+	{
+		this.speeches = speeches;
+	}
+	public void resetDialog()
+	{
+		dialogLabel.setText("");
 	}
 }
