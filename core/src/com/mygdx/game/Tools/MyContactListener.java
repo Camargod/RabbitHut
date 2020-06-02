@@ -5,13 +5,21 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.objects.Npc;
 import com.mygdx.game.objects.Player;
 
-public class MyContactListener implements ContactListener {
+public class MyContactListener implements ContactListener 
+{
 
     public Boolean hasNpcPlayerColision = false;
     public String activeNpc;
+    private Hud screenHud;
+
+    public MyContactListener(Hud hud)
+    {
+        screenHud = hud;
+    }
 
     @Override
     public void beginContact(Contact contact) 
@@ -32,6 +40,7 @@ public class MyContactListener implements ContactListener {
         if(hasNpcPlayerColision && validateColisionPlayerNpc(fa, fb))
         {
             hasNpcPlayerColision = !hasNpcPlayerColision;
+            screenHud.resetDialog();
         }
         activeNpc = "";
     }

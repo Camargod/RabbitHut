@@ -1,5 +1,6 @@
 package com.mygdx.game.objects;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,11 +19,11 @@ public class Player extends Sprite
 {
 	public  World world;
 	public  Body b2Body;
+
 	private String name = "Default";
 	public final String id = "Player";
 	private float X = 32f;
 	private float Y = 32f;
-	private Texture playerSprite;
 	private Array<TextureRegion> idleSprite;
 	private Array<TextureRegion> upSprite;
 	private Array<TextureRegion> downSprite;
@@ -41,10 +42,9 @@ public class Player extends Sprite
 	
 	public Player(String name, MainMenuScreen screen, MyGdxGame game)
 	{
-		super();
+		super(screen.playerSprite,43,88);
 		this.name = name;
 		this.world = screen.getWorld();
-		playerSprite = new Texture(Gdx.files.internal("player/knight.png"));
 
 		idleSprite   = new Array<TextureRegion>();
 		upSprite     = new Array<TextureRegion>();
@@ -55,33 +55,33 @@ public class Player extends Sprite
 		//tamanho do sprite 34/82
 		for(int i = 0; i <=3; i++)
 		{
-			idleSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
+			idleSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
 		}
 		for(int i = 4; i <=7; i++)
 		{
-			downSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
+			downSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
 		}
 		for(int i = 1; i <=5; i++)
 		{
-			upSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
+			upSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
 		}
 		for(int i = 6; i <=7; i++)
 		{
-			rightSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
+			rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
 		}
 		for(int i = 0; i <=3; i++)
 		{
-			rightSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
+			rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
 		}
 		for(int i = 4; i <=7; i++)
 		{
-			leftSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
+			leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
 		}
 		for(int i = 0; i <=1; i++)
 		{
-			leftSprite.add(new TextureRegion(playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
+			leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
 		}
-		setBounds(0, 0, 43, 88);
+		setBounds(0, 0, 43 / MyGdxGame.PPM, 88 / MyGdxGame.PPM);
 		setRegion(idleSprite.first());
 		definePlayer();
 	}
@@ -169,36 +169,37 @@ public class Player extends Sprite
 		animationSpeed = param ? 0.2f : 0.4f;
 	}
 
-	public void draw (SpriteBatch batch, float elapsedTime, float width, float height)
+
+	public void update (SpriteBatch batch, float elapsedTime)
 	{
-		batch.begin();
-		switchDraw(playerDirection, batch, elapsedTime, width, height);
-		batch.end();
+		setPosition(b2Body.getPosition().x, b2Body.getPosition().y);
+		setBounds(0, 0, 43 / MyGdxGame.PPM, 88 / MyGdxGame.PPM);
+		switchDraw(playerDirection, batch, elapsedTime);
 	}
 
-	public void switchDraw(String state, SpriteBatch batch, float elapsedTime, float width, float height)
+	public void switchDraw(String state, SpriteBatch batch, float elapsedTime)
 	{
 		switch(state)
 		{
 			case "idle":
 				playerAnim = new Animation<TextureRegion>(0.1f,idleSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
 				break;
 			case "UP":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
 				break;
 			case "DOWN":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
 				break;
 			case "LEFT":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
 				break;
 			case "RIGHT":
 				playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), (width / 2) + getWidth(), (height / 2) + getHeight() / 2);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
 				break;
 		}
 		

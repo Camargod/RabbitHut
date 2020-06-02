@@ -1,12 +1,12 @@
 package com.mygdx.game.Screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -39,6 +39,8 @@ public class MainMenuScreen implements Screen
 	private OrthogonalTiledMapRenderer renderer;
 	
 	private Player player;
+	public Texture playerSprite;
+
 	private Npc npcs[] = new Npc[3];
 	
 	private World world;
@@ -52,19 +54,22 @@ public class MainMenuScreen implements Screen
 	{
 		this.game = game;
 		world = new World(new Vector2(0,0), true);
-		colisionTrigger = new MyContactListener();
-		world.setContactListener(colisionTrigger);
 
 		maploader = new TmxMapLoader();
 		map = maploader.load("map002.tmx");
 
+		playerSprite = new Texture(Gdx.files.internal("player/knight.png"));
 		player = new Player("Gabriel", this, game);
 		npcs[0]= new Npc(this,map,"NPC001");
 
 		gameCamera = new OrthographicCamera();
 		gameViewPort = new FitViewport((MyGdxGame.V_WIDTH/2.8f)/MyGdxGame.PPM,(MyGdxGame.V_HEIGHT/2.8f)/MyGdxGame.PPM,gameCamera);
 		hud = new Hud(game.batch);
+
 		dialogReader = new JSONDialogReader();
+		
+		colisionTrigger = new MyContactListener(hud);
+		world.setContactListener(colisionTrigger);
 
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
 		SoundPlayer.rain();
@@ -123,7 +128,6 @@ public class MainMenuScreen implements Screen
 					hud.resetDialog();
 				}
 			}
-
 		}
 	}
 	
@@ -142,12 +146,20 @@ public class MainMenuScreen implements Screen
 	public void render(float delta) 
 	{
 		game.elapsedTime += Gdx.graphics.getDeltaTime();
+
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+
+		
+
 		renderer.render();
+
 		worldColisions.b2dr.render(world, gameCamera.combined);
-		player.draw(game.batch,game.elapsedTime,gameViewPort.getScreenWidth(), gameViewPort.getScreenHeight());
+		//hud.stage.getCamera().combined
+		game.batch.setProjectionMatrix(gameCamera.combined);
+		game.batch.begin();
+		player.update(game.batch,game.elapsedTime);
+		game.batch.end();
 		hud.stage.draw();
 		update(delta);
 	}

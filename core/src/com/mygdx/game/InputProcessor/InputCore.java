@@ -12,8 +12,8 @@ public class InputCore implements InputProcessor
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        // TODO Auto-generated method stub
+    public boolean keyDown(int keycode) 
+    {
         return false;
     }
 

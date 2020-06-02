@@ -38,10 +38,10 @@ public class Npc
 	
 	public void definePlayer(TiledMap map)
 	{
-		MapObject object = map.getLayers().get(id).getObjects().getByType(RectangleMapObject.class).first();
-		if(object != null)
+		MapObject objectNpcArea = map.getLayers().get(id).getObjects().getByType(RectangleMapObject.class).first();
+		if(objectNpcArea != null)
 		{
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+			Rectangle rect = ((RectangleMapObject) objectNpcArea).getRectangle();
 			
 			bdef.type = BodyDef.BodyType.StaticBody;
 			bdef.position.set((rect.getX() + rect.getWidth() /2)/ MyGdxGame.PPM, (rect.getY() + rect.getHeight()/2)/MyGdxGame.PPM);

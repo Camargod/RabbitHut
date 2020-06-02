@@ -43,7 +43,7 @@ public class Hud
 		table.setFillParent(true);
 		
 		timeLabel = new Label(worldTimer.toString(), new Label.LabelStyle(new BitmapFont(),Color.WHITE));
-		dialogLabel = new Label("texto", new Label.LabelStyle(new BitmapFont(),Color.WHITE));
+		dialogLabel = new Label("", new Label.LabelStyle(new BitmapFont(),Color.WHITE));
 
 		table.add(timeLabel).expandX().padTop(10).right();
 		table.row();
@@ -62,9 +62,9 @@ public class Hud
 		if(speeches != null)
 		{
 			alreadyInDialog = true;
-			dialogLabel.setText(speeches[actualSpeech]);
 			if(actualSpeech < speeches.length)
 			{
+				dialogLabel.setText(speeches[actualSpeech]);
 				actualSpeech++;
 				return true;
 			}
@@ -80,5 +80,8 @@ public class Hud
 	public void resetDialog()
 	{
 		dialogLabel.setText("");
+		speeches = null;
+		alreadyInDialog = false;
+		actualSpeech = 0;
 	}
 }
