@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Screens.MainMenuScreen;
 
-public class Player extends Sprite
+public class Player
 {
 	public  World world;
 	public  Body b2Body;
@@ -39,10 +39,11 @@ public class Player extends Sprite
 	private float speedMulti = 1f;
 	private float maxSpeed = 1f;
 	private String playerDirection = "idle";
+	private float spriteWidth = 43;
+	private float spriteHeight = 88;
 	
 	public Player(String name, MainMenuScreen screen, MyGdxGame game)
 	{
-		super(screen.playerSprite,43,88);
 		this.name = name;
 		this.world = screen.getWorld();
 
@@ -81,8 +82,6 @@ public class Player extends Sprite
 		{
 			leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
 		}
-		setBounds(0, 0, 43 / MyGdxGame.PPM, 88 / MyGdxGame.PPM);
-		setRegion(idleSprite.first());
 		definePlayer();
 	}
 	
@@ -172,8 +171,6 @@ public class Player extends Sprite
 
 	public void update (SpriteBatch batch, float elapsedTime)
 	{
-		setPosition(b2Body.getPosition().x, b2Body.getPosition().y);
-		setBounds(0, 0, 43 / MyGdxGame.PPM, 88 / MyGdxGame.PPM);
 		switchDraw(playerDirection, batch, elapsedTime);
 	}
 
@@ -183,26 +180,43 @@ public class Player extends Sprite
 		{
 			case "idle":
 				playerAnim = new Animation<TextureRegion>(0.1f,idleSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
-				break;
-			case "UP":
-				playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
-				break;
-			case "DOWN":
-				playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
-				break;
-			case "LEFT":
-				playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
-				break;
-			case "RIGHT":
-				playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite);
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), b2Body.getPosition().x, b2Body.getPosition().y);
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+				break; 
+			case "UP": 
+				playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite); 
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+				break; 
+			case "DOWN": 
+				playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite); 
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+				break; 
+			case "LEFT": 
+				playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite); 
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+				break; 
+			case "RIGHT": 
+				playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite); 
+				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
 				break;
 		}
-		
+	}
+
+	private float drawPosX()
+	{
+		return b2Body.getPosition().x - (spriteWidth / 2 / 3 / MyGdxGame.PPM);
+	}
+	private float drawPosY()
+	{
+		return b2Body.getPosition().y - (spriteHeight / 2 / 10f / MyGdxGame.PPM);
+	}
+
+	private float drawValueWidth()
+	{
+		return spriteWidth / MyGdxGame.PPM / 3;
+	}
+	private float drawValueHeight()
+	{
+		return spriteHeight / MyGdxGame.PPM / 3;
 	}
 	
 }
