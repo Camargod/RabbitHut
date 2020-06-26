@@ -30,6 +30,8 @@ public class Player
 	private Array<TextureRegion> leftSprite;
 	private Array<TextureRegion> rightSprite;
 	public  Animation<TextureRegion> playerAnim;
+	public Texture playerSprite;
+
 	private float animationSpeed = 0.2f;
 
 	private boolean isRunning = false;
@@ -39,13 +41,16 @@ public class Player
 	private float speedMulti = 1f;
 	private float maxSpeed = 1f;
 	private String playerDirection = "idle";
-	private float spriteWidth = 43;
-	private float spriteHeight = 88;
+	private float spriteWidth = 34f;
+	private float spriteHeight = 64f;
 	
 	public Player(String name, MainMenuScreen screen, MyGdxGame game)
 	{
 		this.name = name;
 		this.world = screen.getWorld();
+
+		playerSprite = new Texture(Gdx.files.internal("Girl_for_Antares_Game_Amarela.png"));
+
 
 		idleSprite   = new Array<TextureRegion>();
 		upSprite     = new Array<TextureRegion>();
@@ -56,32 +61,50 @@ public class Player
 		//tamanho do sprite 34/82
 		for(int i = 0; i <=3; i++)
 		{
-			idleSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
+			idleSprite.add(new TextureRegion(playerSprite,16 +((spriteWidth * i) + (29 * i)),0, 16 +((spriteWidth * i) + (29 * i)) + spriteWidth,spriteHeight));
 		}
-		for(int i = 4; i <=7; i++)
-		{
-			downSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
-		}
-		for(int i = 1; i <=5; i++)
-		{
-			upSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
-		}
-		for(int i = 6; i <=7; i++)
-		{
-			rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
-		}
-		for(int i = 0; i <=3; i++)
-		{
-			rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
-		}
-		for(int i = 4; i <=7; i++)
-		{
-			leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
-		}
-		for(int i = 0; i <=1; i++)
-		{
-			leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
-		}
+		// for(int i = 0; i <=3; i++)
+		// {
+		// 	upSprite.add(new TextureRegion(screen.playerSprite,17 +((spriteWidth * i) + (34 * i)),98,spriteWidth,spriteHeight));
+		// }
+		// for(int i = 0; i <=3; i++)
+		// {
+		// 	rightSprite.add(new TextureRegion(screen.playerSprite,17 +((spriteWidth * i) + (34 * i)),178,spriteWidth,spriteHeight));
+		// }
+		// for(int i = 0; i <=3; i++)
+		// {
+		// 	leftSprite.add(new TextureRegion(screen.playerSprite,17 +((spriteWidth * i) + (34 * i)),178,spriteWidth,spriteHeight));
+		// }
+
+		// for(int i = 0; i <=3; i++)
+		// {
+		// 	idleSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
+		// }
+		// for(int i = 4; i <=7; i++)
+		// {
+		// 	downSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),0,34,82));
+		// }
+		// for(int i = 1; i <=5; i++)
+		// {
+		// 	upSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
+		// }
+		// for(int i = 6; i <=7; i++)
+		// {
+		// 	rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),98,34,82));
+		// }
+		// for(int i = 0; i <=3; i++)
+		// {
+		// 	rightSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
+		// }
+		// for(int i = 4; i <=7; i++)
+		// {
+		// 	leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),178,34,82));
+		// }
+		// for(int i = 0; i <=1; i++)
+		// {
+		// 	leftSprite.add(new TextureRegion(screen.playerSprite,24 +((34 * i) + (50 * i)),262,34,82));
+		// }
+
 		definePlayer();
 	}
 	
@@ -182,41 +205,41 @@ public class Player
 				playerAnim = new Animation<TextureRegion>(0.1f,idleSprite);
 				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
 				break; 
-			case "UP": 
-				playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite); 
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
-				break; 
-			case "DOWN": 
-				playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite); 
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
-				break; 
-			case "LEFT": 
-				playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite); 
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
-				break; 
-			case "RIGHT": 
-				playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite); 
-				batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
-				break;
+			// case "UP": 
+			// 	playerAnim = new Animation<TextureRegion>(animationSpeed,upSprite); 
+			// 	batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+			// 	break; 
+			// case "DOWN": 
+			// 	playerAnim = new Animation<TextureRegion>(animationSpeed,downSprite); 
+			// 	batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+			// 	break; 
+			// case "LEFT": 
+			// 	playerAnim = new Animation<TextureRegion>(animationSpeed,leftSprite); 
+			// 	batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+			// 	break; 
+			// case "RIGHT": 
+			// 	playerAnim = new Animation<TextureRegion>(animationSpeed,rightSprite); 
+			// 	batch.draw(playerAnim.getKeyFrame(elapsedTime,true), drawPosX(), drawPosY(), drawValueWidth(), drawValueHeight());
+			// 	break;
 		}
 	}
 
 	private float drawPosX()
 	{
-		return b2Body.getPosition().x - (spriteWidth / 2 / 3 / MyGdxGame.PPM);
+		return b2Body.getPosition().x - (spriteWidth / 2 /*/ 2 / 3 */ / MyGdxGame.PPM);
 	}
 	private float drawPosY()
 	{
-		return b2Body.getPosition().y - (spriteHeight / 2 / 10f / MyGdxGame.PPM);
+		return b2Body.getPosition().y - (spriteHeight / 2 /* / 2 / 10f */ / MyGdxGame.PPM);
 	}
 
 	private float drawValueWidth()
 	{
-		return spriteWidth / MyGdxGame.PPM / 3;
+		return spriteWidth / MyGdxGame.PPM;
 	}
 	private float drawValueHeight()
 	{
-		return spriteHeight / MyGdxGame.PPM / 3;
+		return spriteHeight / MyGdxGame.PPM;
 	}
 	
 }

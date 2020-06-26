@@ -1,7 +1,6 @@
 package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,6 +19,7 @@ import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Tools.Box2DWorldCreator;
 import com.mygdx.game.Tools.JSONDialogReader;
 import com.mygdx.game.Tools.MyContactListener;
+import com.mygdx.game.Tools.PlayerInput;
 import com.mygdx.game.Tools.SoundPlayer;
 import com.mygdx.game.objects.Npc;
 import com.mygdx.game.objects.Player;
@@ -39,7 +39,6 @@ public class MainMenuScreen implements Screen
 	private OrthogonalTiledMapRenderer renderer;
 	
 	private Player player;
-	public Texture playerSprite;
 
 	private Npc npcs[] = new Npc[3];
 	
@@ -58,7 +57,6 @@ public class MainMenuScreen implements Screen
 		maploader = new TmxMapLoader();
 		map = maploader.load("map002.tmx");
 
-		playerSprite = new Texture(Gdx.files.internal("player/knight.png"));
 		player = new Player("Gabriel", this, game);
 		npcs[0]= new Npc(this,map,"NPC001");
 
@@ -86,49 +84,8 @@ public class MainMenuScreen implements Screen
 
 	public void handleInput(float dt)
 	{
-		if(Gdx.input.isKeyPressed(Input.Keys.D))
-		{
-			player.Move(Input.Keys.D);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.A))
-		{
-			player.Move(Input.Keys.A);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W))
-		{
-			player.Move(Input.Keys.W);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.S))
-		{
-			player.Move(Input.Keys.S);
-		}
-		if(!Gdx.input.isKeyPressed(Input.Keys.S) && !Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D))
-		{
-			player.Move(0);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-		{
-			player.setRunningState(true);
-		}
-		if(!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-		{
-			player.setRunningState(false);
-		}
-		if(Gdx.input.isKeyJustPressed(Input.Keys.E) && colisionTrigger.hasNpcPlayerColision)
-		{
-			if(!hud.alreadyInDialog)
-			{
-				hud.setSpeechArray(dialogReader.setActualSpeech(colisionTrigger.activeNpc));
-				hud.updateSpeech();
-			} 
-			else
-			{
-				if(!hud.updateSpeech())
-				{
-					hud.resetDialog();
-				}
-			}
-		}
+		PlayerInput.InputHandleMovement(player, hud);
+		PlayerInput.InputHandleTriggerDialogs(player, hud, colisionTrigger, dialogReader);
 	}
 	
 	public void update(float dt)
@@ -150,13 +107,12 @@ public class MainMenuScreen implements Screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		
-
 		renderer.render();
 
 		worldColisions.b2dr.render(world, gameCamera.combined);
-		//hud.stage.getCamera().combined
+
 		game.batch.setProjectionMatrix(gameCamera.combined);
+		
 		game.batch.begin();
 		player.update(game.batch,game.elapsedTime);
 		game.batch.end();
