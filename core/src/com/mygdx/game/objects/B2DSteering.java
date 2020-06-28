@@ -1,6 +1,8 @@
 package com.mygdx.game.objects;
 
 import com.badlogic.gdx.ai.steer.Steerable;
+import com.badlogic.gdx.ai.steer.SteeringAcceleration;
+import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.utils.Location;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,21 +10,68 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class B2DSteering implements Steerable<Vector2> 
 {
     Body body;
+    float boundRadius;
     boolean tagger;
-    public B2DSteering(Body body)
-    {
+    float maxLinearSpeed,maxLinearAcceleration, maxAngularSpeed, maxAngularAcceleration;
 
+    SteeringBehavior<Vector2> behavior;
+    SteeringAcceleration<Vector2> steeringOutput;
+
+    public B2DSteering(Body body,float boundRadius)
+    {
+        this.body = body;
+        this.boundRadius = boundRadius;
+
+        this.maxLinearSpeed = 5000;
+        this.maxLinearAcceleration = 5000;
+        this.maxAngularSpeed = 30;
+        this.maxAngularAcceleration = 5;
+
+        this.tagger = false;
+
+        this.steeringOutput = new SteeringAcceleration<Vector2>(new Vector2());
     }
+    public void update(float delta)
+    {
+        if(behavior != null)
+        {
+            behavior.calculateSteering(steeringOutput);
+            applySteering(delta);
+        }
+    }
+
+    public void applySteering(float delta)
+    {
+        boolean anyAccelerations = false;
+
+        if(!steeringOutput.linear.isZero())
+        {
+            Vector2 force = steeringOutput.linear.scl(delta);
+            body.applyForceToCenter(force, true);
+            anyAccelerations = true;
+        }
+
+        if(anyAccelerations)
+        {
+            Vector2 velocity = body.getLinearVelocity();
+            float currentSpeedSquare = velocity.len2();
+            if(currentSpeedSquare > maxAngularSpeed * maxLinearSpeed)
+            {
+                body.setLinearVelocity(velocity.scl(maxAngularSpeed / (float) Math.sqrt(currentSpeedSquare)));
+            }
+        }
+    }
+
     @Override
     public Vector2 getPosition() {
         // TODO Auto-generated method stub
-        return null;
+        return body.getPosition();
     }
 
     @Override
     public float getOrientation() {
         // TODO Auto-generated method stub
-        return 0;
+        return body.getAngle();
     }
 
     @Override
@@ -64,79 +113,92 @@ public class B2DSteering implements Steerable<Vector2>
     @Override
     public float getMaxLinearSpeed() {
         // TODO Auto-generated method stub
-        return 0;
+        return this.maxLinearSpeed;
     }
 
     @Override
     public void setMaxLinearSpeed(float maxLinearSpeed) {
-        // TODO Auto-generated method stub
+        this.maxLinearSpeed = maxLinearSpeed;
 
     }
 
     @Override
     public float getMaxLinearAcceleration() {
         // TODO Auto-generated method stub
-        return 0;
+        return this.maxLinearAcceleration;
     }
 
     @Override
     public void setMaxLinearAcceleration(float maxLinearAcceleration) {
-        // TODO Auto-generated method stub
-
+        this.maxLinearAcceleration = maxLinearAcceleration;
     }
 
     @Override
     public float getMaxAngularSpeed() {
         // TODO Auto-generated method stub
-        return 0;
+        return this.maxAngularSpeed;
     }
 
     @Override
     public void setMaxAngularSpeed(float maxAngularSpeed) {
-        // TODO Auto-generated method stub
+        this.maxAngularSpeed = maxAngularSpeed;
 
     }
 
     @Override
     public float getMaxAngularAcceleration() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.maxAngularAcceleration;
     }
 
     @Override
-    public void setMaxAngularAcceleration(float maxAngularAcceleration) {
-        // TODO Auto-generated method stub
-
+    public void setMaxAngularAcceleration(float maxAngularAcceleration) 
+    {
+        this.maxAngularAcceleration = maxAngularAcceleration;
     }
 
     @Override
     public Vector2 getLinearVelocity() {
         // TODO Auto-generated method stub
-        return null;
+        return body.getLinearVelocity();
     }
 
     @Override
     public float getAngularVelocity() {
         // TODO Auto-generated method stub
-        return 0;
+        return body.getAngularVelocity();
     }
 
     @Override
     public float getBoundingRadius() {
         // TODO Auto-generated method stub
-        return 0;
+        return boundRadius;
     }
 
     @Override
     public boolean isTagged() {
         // TODO Auto-generated method stub
-        return false;
+        return tagger;
     }
 
     @Override
     public void setTagged(boolean tagged) {
-        // TODO Auto-generated method stub
+       this.tagger = tagged;
 
+    }
+
+    public Body getBody()
+    {
+        return body;
+    }
+
+    public void setBehavior(SteeringBehavior<Vector2> behavior)
+    {
+        this.behavior = behavior;
+    }
+
+    public SteeringBehavior<Vector2> getBehavior()
+    {
+        return behavior;
     }
     
 }

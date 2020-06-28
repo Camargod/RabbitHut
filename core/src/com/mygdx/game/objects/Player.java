@@ -43,6 +43,8 @@ public class Player
 	private String playerDirection = "idle";
 	private float spriteWidth = 34f;
 	private float spriteHeight = 64f;
+
+	public B2DSteering ai;
 	
 	public Player(String name, MainMenuScreen screen, MyGdxGame game)
 	{
@@ -121,7 +123,10 @@ public class Player
 		shape.setRadius(5/MyGdxGame.PPM);
 		
 		fdef.shape = shape;
+		ai = new B2DSteering(this.b2Body, 10);
 		b2Body.createFixture(fdef).setUserData(this);
+
+		
 	}
 	
 	/**

@@ -1,6 +1,5 @@
 package com.mygdx.game.objects;
 
-
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -25,18 +25,28 @@ public class Npc
 
 	World world;
     
-    BodyDef bdef = new BodyDef();
-    PolygonShape shape = new PolygonShape();
+	BodyDef bdef = new BodyDef();
+	PolygonShape shape = new PolygonShape();
     FixtureDef fixtDef = new FixtureDef();
 	Body body;
 	
-	
+	public B2DSteering ai;
+
 	public Npc(MainMenuScreen screen,TiledMap map,String id)
 	{
-		super();
 		this.world = screen.getWorld();
 		this.id = id;
-		definePlayer(map);
+		if(map != null)
+		{
+			definePlayer(map);
+		}
+	}
+
+	public Npc(MainMenuScreen screen,String id, Float size)
+	{
+		this.world = screen.getWorld();
+		this.id = id;
+		definePlayer(size);
 	}
 	
 	public void definePlayer(TiledMap map)
@@ -54,13 +64,34 @@ public class Npc
 			
 			fixtDef.shape = shape;
 			fixtDef.isSensor= true;
+			this.ai = new B2DSteering(body, 10);
 			body.createFixture(fixtDef).setUserData(this);
 		}
 	}
 
+	public void definePlayer(Float size)
+	{
+		
+		bdef.position.set(20/MyGdxGame.PPM,20/MyGdxGame.PPM);
+		bdef.type = BodyDef.BodyType.DynamicBody;
+		bdef.linearDamping = 5f;
+
+		body = world.createBody(bdef);
+		CircleShape shape = new CircleShape();
+		shape.setRadius(size/MyGdxGame.PPM);
+		
+		fixtDef.shape = shape;
+		fixtDef.friction = 1f;
+		fixtDef.isSensor= false;
+		this.ai = new B2DSteering(body, 10);
+		body.createFixture(fixtDef).setUserData(this);
+		
+	} 
+
 	public void setAI(Player followEntity)
 	{
-		Arrive<Vector2> arriveBehavior = new Arrive<Vector2>(this.body,followEntity.b2Body)
+		Arrive<Vector2> arriveBehavior = new Arrive<Vector2>(this.ai,followEntity.ai).setTimeToTarget(0.03f).setArrivalTolerance(0.3f).setDecelerationRadius(10);
+		ai.setBehavior(arriveBehavior);
 	}
 
 }

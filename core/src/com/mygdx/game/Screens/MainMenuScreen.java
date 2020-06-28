@@ -60,6 +60,9 @@ public class MainMenuScreen implements Screen
 		player = new Player("Gabriel", this, game);
 		npcs[0]= new Npc(this,map,"NPC001");
 
+		npcs[1] = new Npc(this,"AAa",5f);
+		npcs[1].setAI(player);
+
 		gameCamera = new OrthographicCamera();
 		gameViewPort = new FitViewport((MyGdxGame.V_WIDTH/2.8f)/MyGdxGame.PPM,(MyGdxGame.V_HEIGHT/2.8f)/MyGdxGame.PPM,gameCamera);
 		hud = new Hud(game.batch);
@@ -97,6 +100,7 @@ public class MainMenuScreen implements Screen
 		gameCamera.update();
 		hud.update(dt);
 		renderer.setView(gameCamera);
+		npcs[1].ai.update(dt);
 	}
 
 	@Override
