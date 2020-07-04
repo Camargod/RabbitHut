@@ -118,7 +118,8 @@ public class MainMenuScreen implements Screen
 		game.batch.setProjectionMatrix(gameCamera.combined);
 		
 		game.batch.begin();
-		player.update(game.batch,game.elapsedTime);
+		player.update(game.batch,game.elapsedTime,player.b2Body);
+		npcs[1].update(game.batch, game.elapsedTime, npcs[1].body);
 		game.batch.end();
 		hud.stage.draw();
 		update(delta);

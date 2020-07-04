@@ -14,10 +14,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Screens.MainMenuScreen;
-
+import com.mygdx.game.interfaces.PlayerNpcBase;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 
-public class Npc
+public class Npc extends PlayerNpcBase
 {
 	public String id;
 
@@ -28,7 +28,7 @@ public class Npc
 	BodyDef bdef = new BodyDef();
 	PolygonShape shape = new PolygonShape();
     FixtureDef fixtDef = new FixtureDef();
-	Body body;
+	public Body body;
 	
 	public B2DSteering ai;
 
@@ -72,7 +72,7 @@ public class Npc
 	public void definePlayer(Float size)
 	{
 		
-		bdef.position.set(20/MyGdxGame.PPM,20/MyGdxGame.PPM);
+		bdef.position.set(120/MyGdxGame.PPM,120/MyGdxGame.PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.linearDamping = 5f;
 
@@ -90,8 +90,9 @@ public class Npc
 
 	public void setAI(Player followEntity)
 	{
-		Arrive<Vector2> arriveBehavior = new Arrive<Vector2>(this.ai,followEntity.ai).setTimeToTarget(0.03f).setArrivalTolerance(0.3f).setDecelerationRadius(10);
+		Arrive<Vector2> arriveBehavior = new Arrive<Vector2>(this.ai,followEntity.ai).setTimeToTarget(1.12f).setArrivalTolerance(0.5f).setDecelerationRadius(10);
 		ai.setBehavior(arriveBehavior);
 	}
+
 
 }
